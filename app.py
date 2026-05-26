@@ -1,4 +1,7 @@
 from flask import Flask, render_template
+import os
+
+APP_ENV = os.getenv("APP_ENV", "development")
 
 app = Flask(__name__)
 
