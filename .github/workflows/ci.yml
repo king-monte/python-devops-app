@@ -27,7 +27,7 @@ jobs:
       - name: Build Image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:${IMAGE_TAG} .
-          docker tag ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:${IMAGE_TAG} yourdockerhub/flask-devops-app:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:${IMAGE_TAG} ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:latest
 
       - name: Push Image
         run: |
