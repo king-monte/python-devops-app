@@ -39,9 +39,7 @@ jobs:
 
 
           script: |
-              whoami
-              pwd
-              ls -la
-              docker --version
-              docker compose version
-              docker ps
+            cd flask-app
+            docker compose pull
+            docker compose down
+            docker compose up -d
