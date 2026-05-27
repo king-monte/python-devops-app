@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
+import time
 
 app = Flask(__name__)
 
@@ -27,8 +28,23 @@ def home():
 def health():
     return {"status": "healthy"}, 200
 
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
+
+    retries = 5
+
+    while retries > 0:
+        try:
+            with app.app_context():
+                db.create_all()
+
+            print("Database connected successfully!")
+            break
+
+        except Exception as e:
+            print(f"Database not ready: {e}")
+
+            retries -= 1
+            time.sleep(5)
 
     app.run(host='0.0.0.0', port=5000)
