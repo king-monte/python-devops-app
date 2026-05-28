@@ -85,7 +85,7 @@ jobs:
 
             echo "===== RUNNING HEALTH CHECK ====="
 
-            if ! curl -f http://localhost/health; then
+            if ! curl -f http://localhost:8080/health; then
 
               echo "❌ HEALTH CHECK FAILED"
 
