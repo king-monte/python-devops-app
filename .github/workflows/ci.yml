@@ -31,22 +31,71 @@ jobs:
 
       - name: Push Image
         run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:${IMAGE_TAG}
           docker push ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:latest
           
-
+      ```yaml
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.VM_SSH_KEY }}
+          username: ${{ secrets.VM_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 44
 
           script: |
-            cd flask-app
-            docker compose pull
-            docker compose down
-            docker compose up -d
 
-      - name: Health Check
-        run: curl -f http://localhost:8080/health
+            cd ~/python-devops-app
+
+            echo "===== PULLING LATEST CODE ====="
+            git pull origin main
+
+            echo "===== TRACKING VERSIONS ====="
+
+            PREVIOUS=$(cat current_version.txt 2>/dev/null || echo "none")
+
+            echo $PREVIOUS > previous_version.txt
+            echo $NEW_TAG > current_version.txt
+
+            echo "Previous Version: $PREVIOUS"
+            echo "New Version: $NEW_TAG"
+
+            echo "===== PULLING NEW IMAGES ====="
+            docker compose pull
+
+            echo "===== STARTING CONTAINERS ====="
+            docker compose up -d --build
+
+            echo "===== WAITING FOR APP ====="
+            sleep 15
+
+            echo "===== RUNNING HEALTH CHECK ====="
+
+            if ! curl -f http://localhost:5000/health; then
+
+                echo "❌ FAILURE DETECTED - STARTING ROLLBACK"
+
+                docker compose down
+
+                docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:$PREVIOUS
+
+                docker tag \
+                ${{ secrets.DOCKER_USERNAME }}/flask-app:$PREVIOUS \
+                ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
+
+                echo "===== STARTING PREVIOUS VERSION ====="
+
+                docker compose up -d
+
+                echo "✅ ROLLBACK COMPLETE"
+
+                exit 1
+
+            fi
+
+            echo "✅ DEPLOYMENT SUCCESSFUL"
+
+            docker ps
+    
+
+     
