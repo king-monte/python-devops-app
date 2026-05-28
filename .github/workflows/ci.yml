@@ -32,9 +32,8 @@ jobs:
       - name: Push Image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:${IMAGE_TAG}
-          docker push ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:latest
-          
-      ```yaml
+          docker push ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:latest    
+
       - name: Deploy to VM
         uses: appleboy/ssh-action@v1.0.3
         with:
