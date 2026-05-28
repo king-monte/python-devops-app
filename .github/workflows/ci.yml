@@ -44,7 +44,7 @@ jobs:
 
           script: |
 
-            cd ~/python-devops-app
+            cd ~/flask-app/python-devops-app
 
             echo "===== PULLING LATEST CODE ====="
             git pull origin main
