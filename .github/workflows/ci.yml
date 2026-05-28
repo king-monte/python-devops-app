@@ -76,11 +76,11 @@ jobs:
 
                 docker compose down
 
-                docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:$PREVIOUS
+                docker pull ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:$PREVIOUS
 
                 docker tag \
-                ${{ secrets.DOCKER_USERNAME }}/flask-app:$PREVIOUS \
-                ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
+                ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:$PREVIOUS \
+                ${{ secrets.DOCKER_USERNAME }}/flask-devops-app:latest
 
                 echo "===== STARTING PREVIOUS VERSION ====="
 
